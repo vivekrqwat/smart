@@ -1,12 +1,13 @@
 import { Box, Button, TextField, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { ThemeContext } from '../../ThemeContex';
 export default function Login() {
   const [roomid,setroomid]=useState();
   const [uname,setuname]=useState();
   const navigate = useNavigate();
- 
+ const {setusername}=useContext(ThemeContext);
   console.log("a",roomid);
     const textFieldStyles = {
         backgroundColor: "#F0E9E9",
@@ -39,7 +40,11 @@ export default function Login() {
 
       }
 
-       const goToDashboard = () => {
+       const goToDashboard = (e) => {
+        e.preventDefault();
+        setusername(uname);
+        console.log(uname);
+        
              navigate(`/editor/${roomid}`)
             };
     

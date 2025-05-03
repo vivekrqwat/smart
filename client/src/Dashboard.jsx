@@ -6,12 +6,15 @@ import Drawer1 from './Component/Dashboardcomponent/Drawer1';
 import Tools from './Component/Dashboardcomponent/Tools';
 import { ThemeContext } from './ThemeContex';
 import { initsocket } from './socket';
+import Attendance from './Component/form/Attendance';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function Dashboard() {
+ 
   const socketref=useRef(null);
   const canvasRef = useRef(null);
 
-    const{pen,penColor}=useContext(ThemeContext);
+    const{pen,penColor,username}=useContext(ThemeContext);
     const boxstyle={
         display:"flex",
         justifyContent:"space-evenly",
@@ -20,17 +23,19 @@ export default function Dashboard() {
        
         
     }
-    console.log(pen,"pen")
-
-    const handleChange=async()=>{
-     
+ 
+    console.log(username)
+    const handleChange = async () => {
+      if (!canvasRef.current || !socketref.current||username!='admin') return;
+    
       const paths = await canvasRef.current.exportPaths();
       socketref.current.emit('drawing', {
         roomid: 'shared-board',
-        data: paths
+        data: paths,
       });
-      console.log("change")
-    }
+    
+      console.log("Stroke finished and sent");
+    };
     
 
    
@@ -44,8 +49,9 @@ export default function Dashboard() {
         // })
         socketref.current.emit('join', { roomid: 'shared-board' });
         socketref.current.on("r-drawing",(data)=>{
-        console.log("data",data);
-        console.log("data2",canvasRef.current);
+        // console.log("data",data);
+        // console.log("data2",canvasRef.current);
+        console.log("r-draw")
           if(canvasRef.current){
             canvasRef.current.loadPaths(data);
            
@@ -61,6 +67,11 @@ export default function Dashboard() {
         }
       };
     },[])
+    const notify=()=>{
+      toast(
+        <Attendance></Attendance>
+      )
+    }
    
   return (
     <Box width={"100%"} 
@@ -68,19 +79,33 @@ export default function Dashboard() {
     border={"2px solid red"}
     >
           <ReactSketchCanvas
-        ref={canvasRef}
+         ref={canvasRef}
         width="100%"
         height="80%"
         strokeWidth={pen}
         strokeColor={penColor}
         canvasColor="#D9D9D9"
         withTimestamp={true}
-        onChange={handleChange}
+        onStroke={username=="admin"?handleChange:undefined}
+        allowOnlyPointerType={username=='admin'&&'all'}
       />
 
 
       <Box style={boxstyle} width={"100%"} mt="30px" height={"20%"}>
-        <Drawer1></Drawer1>
+       
+       {/* <Attendance></Attendance> */}
+       <ToastContainer
+  position="bottom-right"
+  autoClose={6000}
+  hideProgressBar={false}
+  newestOnTop={true}
+  closeButton={false}
+  pauseOnHover={true}
+  draggable={true}
+/>
+       
+       
+       { username=="admin"&&<Drawer1></Drawer1>}
         {/* box for icon button */}
         {/* <Box style={boxstyle} width={"30%"}>
         <CreateIcon></CreateIcon>
@@ -89,20 +114,29 @@ export default function Dashboard() {
 
             
         </Box > */}
-        <Tools></Tools>
+       {username=="admin"&&<Tools></Tools>} 
       {/* box for button */}
       <Box sx={boxstyle} width={"50%"}>
-      <Button variant='contained' sx={{background:"#4761DF",
+     {username=="admin"&& <Button variant='contained' sx={{background:"#4761DF",
         color:"white",
         fontFamily:"Roboto"
         
        }}>go_to code_collab</Button>
+       }
 
-    <Button variant='contained' sx={{background:"#1A8899",
+   { username=="admin"?<Button variant='contained' sx={{background:"#1A8899",
         color:"white",
         fontFamily:"Roboto"
         
-       }}>Send_Attendance</Button>
+       }} onClick={notify}>Send_Attendance</Button>:
+       <Button variant='contained' sx={{background:"#1A8899",
+        color:"white",
+        fontFamily:"Roboto"
+        
+       }}>Send_Request</Button>
+
+
+      }
        <Button variant='contained' sx={{background:"#ed4f41",
         color:"white",
         fontFamily:"Roboto"
