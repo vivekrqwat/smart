@@ -16,6 +16,11 @@ io.on("connection",socket=>{
         console.log("drawing",roomid)
         socket.to(roomid).emit("r-drawing",data)
     })
+
+    socket.on('send-attendance',({message})=>{
+        console.log(message);
+        socket.broadcast.emit('r-attendance',{message});
+    })
     
     socket.on("leave",({roomid})=>{
         socket.leave(roomid)

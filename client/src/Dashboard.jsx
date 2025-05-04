@@ -19,6 +19,7 @@ export default function Dashboard() {
         display:"flex",
         justifyContent:"space-evenly",
         alignItems:"center",
+        gap:"10px"
         // border:"2px solid red",
        
         
@@ -57,6 +58,21 @@ export default function Dashboard() {
            
           }
         })
+
+        //attendance message
+        socketref.current.on('r-attendance',({message})=>{
+          console.log("socket username",username)
+          if(username!="admin"&& username!=undefined){
+            console.log("socket username2",username)
+            toast(
+              <Attendance></Attendance>
+            )
+          }else if(username=='admin'){
+            toast.info("attendance has been sendend",{
+              autoClose:2000
+            });
+          }
+        })
       }
       init();
 
@@ -71,6 +87,14 @@ export default function Dashboard() {
       toast(
         <Attendance></Attendance>
       )
+    }
+    const sendMessage=(e)=>{
+      e.preventDefault();
+      if(socketref.current && username=='admin'){
+        socketref.current.emit('send-attendance',{
+          message:"attendance is sended"
+        })
+      }
     }
    
   return (
@@ -119,19 +143,22 @@ export default function Dashboard() {
       <Box sx={boxstyle} width={"50%"}>
      {username=="admin"&& <Button variant='contained' sx={{background:"#4761DF",
         color:"white",
-        fontFamily:"Roboto"
+        
+        fontSize:"0.9rem"
         
        }}>go_to code_collab</Button>
        }
 
    { username=="admin"?<Button variant='contained' sx={{background:"#1A8899",
         color:"white",
-        fontFamily:"Roboto"
+      
+          fontSize:"0.9rem"
         
-       }} onClick={notify}>Send_Attendance</Button>:
+       }} onClick={sendMessage}>Send_Attendance</Button>:
        <Button variant='contained' sx={{background:"#1A8899",
         color:"white",
-        fontFamily:"Roboto"
+        fontFamily:"Roboto",
+          fontSize:"0.9rem"
         
        }}>Send_Request</Button>
 
@@ -139,7 +166,8 @@ export default function Dashboard() {
       }
        <Button variant='contained' sx={{background:"#ed4f41",
         color:"white",
-        fontFamily:"Roboto"
+       
+          fontSize:"0.9rem"
         
        }}>Leave_Room</Button>
       </Box>
