@@ -8,6 +8,7 @@ export const ThemeProvider=({children})=>{
     const[penColor,setpenColor]=useState('red');
     const[showpen,setshowpen]=useState(false);
     const[username,setusername]=useState();
+    const [atd,setatd]=useState([]);
     const themeValue={
         pen,
         penColor,
@@ -16,7 +17,9 @@ export const ThemeProvider=({children})=>{
         showpen,
         setshowpen,
         username,
-        setusername
+        setusername,
+        atd,
+        setatd
     }
     return(
         <ThemeContext.Provider value={themeValue}>

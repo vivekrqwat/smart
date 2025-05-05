@@ -22,6 +22,13 @@ io.on("connection",socket=>{
         socket.broadcast.emit('r-attendance',{message});
     })
     
+
+    socket.on('sendreq',({message})=>{
+        console.log('message name is ',message);
+        socket.broadcast.emit('r-sendreq',{message})
+    })
+
+
     socket.on("leave",({roomid})=>{
         socket.leave(roomid)
         console.log("leave")

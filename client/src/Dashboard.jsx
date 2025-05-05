@@ -8,13 +8,14 @@ import { ThemeContext } from './ThemeContex';
 import { initsocket } from './socket';
 import Attendance from './Component/form/Attendance';
 import { ToastContainer, toast } from 'react-toastify';
+import Request from './Component/Request/Requset';
 
 export default function Dashboard() {
  
   const socketref=useRef(null);
   const canvasRef = useRef(null);
 
-    const{pen,penColor,username}=useContext(ThemeContext);
+    const{pen,penColor,username,setatd}=useContext(ThemeContext);
     const boxstyle={
         display:"flex",
         justifyContent:"space-evenly",
@@ -73,6 +74,13 @@ export default function Dashboard() {
             });
           }
         })
+
+
+        //send req
+        socketref.current.on('r-sendreq',({message})=>{
+          console.log('bhai  ka nam',message)
+          setatd(prv=>[...prv,message]);
+        })
       }
       init();
 
@@ -96,7 +104,11 @@ export default function Dashboard() {
         })
       }
     }
-   
+   const sendRequest=(e)=>{
+    if(socketref.current){
+      socketref.current.emit('sendreq',{message:username})
+    }
+   }
   return (
     <Box width={"100%"} 
     height={"100vh"}
@@ -128,6 +140,9 @@ export default function Dashboard() {
   draggable={true}
 />
        
+
+
+
        
        { username=="admin"&&<Drawer1></Drawer1>}
         {/* box for icon button */}
@@ -155,7 +170,10 @@ export default function Dashboard() {
           fontSize:"0.9rem"
         
        }} onClick={sendMessage}>Send_Attendance</Button>:
-       <Button variant='contained' sx={{background:"#1A8899",
+       <Button 
+       variant='contained'
+       onClick={sendRequest}
+        sx={{background:"#1A8899",
         color:"white",
         fontFamily:"Roboto",
           fontSize:"0.9rem"
