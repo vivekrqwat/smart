@@ -20,7 +20,7 @@ export default function Home() {
     alignItems={"center"}>
     <Typography
     sx={{
-        fontSize:"64px"
+        fontSize:{xs:"30px",sm:"7rem"}
     }}
     >DELTA_VIEW BOARD</Typography>
     <Typography variant='subtitle' fontFamily={"Roboto"}>A limitless canvas for collaborative minds.</Typography>
@@ -30,12 +30,12 @@ export default function Home() {
     <Box
            sx={{
                background:"red",
-               width:"220px",
-               height:"220px",
+               width:{sm:"220px",xs:"80px"},
+               height:{sm:"220px",xs:"80px"},
                borderRadius:"50%",
                position:"fixed",
                top:"-55px",
-               right:"105px"
+               right:{sm:"105px",xs:"20px"}
    
    
            }}
@@ -44,12 +44,12 @@ export default function Home() {
             <Box
                    sx={{
                        background:"#F2F930",
-                       width:"120px",
-                       height:"120px",
+                       width:{sm:"120px",xs:"40px"},
+                       height:{sm:"120px",xs:"40px"},
                        borderRadius:"50%",
                        position:"absolute",
-                       top:"220px",
-                       right:"5px"
+                       top:{sm:"220px",xs:"20px"},
+                       right:{sm:"5px",xs:"20px"}
                    
                    }}
                    ></Box>
@@ -57,44 +57,53 @@ export default function Home() {
                       <Box
                            sx={{
                                background:"#2943EE",
-                               width:"120px",
-                               height:"120px",
+                               width:{sm:"120px",xs:"80px"},
+                       height:{sm:"120px",xs:"80px"},
                                borderRadius:"50%",
                                position:"absolute",
-                               top:"40px",
-                               right:"-55px"
+                               top:{sm:"40px",xs:"70px"},
+                               right:{sm:"-55px",xs:"5px"}
                            }}
                            ></Box>
 
 
      {/* Sideimage ***********_______**____*/}
-<img src={p1} alt="" 
-style={{
-    position:"absolute",
-    top:"50px",
-    left:"100px",
-    height:"220px",
-    width:"220px"
-}}
-/>
-<img src={p2} alt=""
-style={{
-    position:"absolute",
-    top:"280px",
-    left:"80px",
-    height:"140px",
-    width:"140px"
-}}
-/>
-<img src={p3} alt="" 
-style={{
-    position:"absolute",
-    top:"180px",
-    left:"50px",
-    height:"120px",
-    width:"120px"
-}}
-/>
+   <img
+      src={p1}
+      alt="Image 1"
+      style={{
+        position: 'absolute',
+        top: '5%',
+        left: '8%',
+        width: '20vw',
+        height: 'auto',
+        maxWidth: '220px',
+      }}
+    />
+    <img
+      src={p2}
+      alt="Image 2"
+      style={{
+        position: 'absolute',
+        top: '30%',
+        left: '9%',
+        width: '25vw',
+        height: 'auto',
+        maxWidth: '250px',
+      }}
+    />
+    <img
+      src={p3}
+      alt="Image 3"
+      style={{
+        position: 'absolute',
+        top: '20%',
+        left: '3%',
+        width: '15vw',
+        height: 'auto',
+        maxWidth: '180px',
+      }}
+    />
 {/* -----greeen side Cricle------- */}
 
 
