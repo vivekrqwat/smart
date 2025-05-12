@@ -5,6 +5,10 @@ const http=require("http");
 const {Server}=require("socket.io")
 const server=http.createServer(app)
 const io=new Server(server);
+
+// Store admin information
+const roomAdmins = new Map();
+
 io.on("connection",socket=>{
     console.log("you socket id is",socket.id)
     socket.on("join",({roomid})=>{
@@ -33,7 +37,18 @@ io.on("connection",socket=>{
         socket.leave(roomid)
         console.log("leave")
     })
-  
+
+    // Handle admin leaving
+    socket.on('admin-leaving', ({ roomid }) => {
+        // Notify all participants in the room that admin has left
+        io.to(roomid).emit('admin-left');
+        console.log(`Admin left room ${roomid}`);
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', () => {
+        console.log(`Socket ${socket.id} disconnected`);
+    });
 })
 server.listen(5000,()=>{
     console.log("server is listing")
