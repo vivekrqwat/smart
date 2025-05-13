@@ -28,6 +28,10 @@ io.on("connection",socket=>{
         socket.broadcast.emit('r-sendreq',{message})
     })
 
+    socket.on('mark',({rollnumber})=>{
+        console.log("meassagw",rollnumber);
+        socket.broadcast.emit("r-mark",{rollnumber});
+    })
 
     socket.on("leave",({roomid})=>{
         socket.leave(roomid)

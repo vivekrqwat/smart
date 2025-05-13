@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material'
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { ReactSketchCanvas } from "react-sketch-canvas";
 
 import Drawer1 from './Component/Dashboardcomponent/Drawer1';
@@ -14,8 +14,8 @@ export default function Dashboard() {
  
   const socketref=useRef(null);
   const canvasRef = useRef(null);
-
-    const{pen,penColor,username,setatd}=useContext(ThemeContext);
+    const[message,setmessage]=useState('');
+    const{pen,penColor,username,setatd,atd,mark,setmark}=useContext(ThemeContext);
     const boxstyle={
         display:"flex",
         justifyContent:"space-evenly",
@@ -39,8 +39,20 @@ export default function Dashboard() {
       console.log("Stroke finished and sent");
     };
     
+//change mark
+const changeMark=(number)=>{
+  let index=Number(number)
+  console.log(mark,",",index);
+  let updatemark=[...mark];
+  updatemark[index]=index;
+  console.log(updatemark[index],"yha hua change");
+  setmark(updatemark);
+  console.log(mark)
+  console.log(updatemark)
 
-   
+}
+   //leave
+
     
 
     useEffect(()=>{
@@ -66,7 +78,7 @@ export default function Dashboard() {
           if(username!="admin"&& username!=undefined){
             console.log("socket username2",username)
             toast(
-              <Attendance></Attendance>
+              <Attendance socketref={socketref}></Attendance>
             )
           }else if(username=='admin'){
             toast.info("attendance has been sendend",{
@@ -76,11 +88,16 @@ export default function Dashboard() {
         })
 
 
-        //send req
+        //recv  req
         socketref.current.on('r-sendreq',({message})=>{
           console.log('bhai  ka nam',message)
           setatd(prv=>[...prv,message]);
         })
+        //recv mark
+        socketref.current.on('r-mark', ({ rollnumber }) => {
+          console.log("socket roll", rollnumber);
+          changeMark(rollnumber);
+        });
       }
       init();
 
@@ -93,7 +110,7 @@ export default function Dashboard() {
     },[])
     const notify=()=>{
       toast(
-        <Attendance></Attendance>
+        <Attendance ></Attendance>
       )
     }
     const sendMessage=(e)=>{
@@ -109,6 +126,27 @@ export default function Dashboard() {
       socketref.current.emit('sendreq',{message:username})
     }
    }
+   //leave
+   const leave=()=>{
+    if(username=='admin'){
+      console.log("leave ho gya",mark);
+      let message="";
+      {mark.map((i)=>{
+       i>=3 ?message+=`${i},`:"";
+      })
+
+      }
+      console.log(message);
+      
+     
+      
+    }
+  
+   }
+         useEffect(() => {
+           console.log("Updated atd:", message);
+         }, [message]);
+  
   return (
     <Box width={"100%"} 
     height={"100vh"}
@@ -169,7 +207,10 @@ export default function Dashboard() {
       
           fontSize:"0.9rem"
         
-       }} onClick={sendMessage}>Send_Attendance</Button>:
+       }} onClick={sendMessage}
+       
+    
+       >Send_Attendance</Button>:
        <Button 
        variant='contained'
        onClick={sendRequest}
@@ -178,7 +219,10 @@ export default function Dashboard() {
         fontFamily:"Roboto",
           fontSize:"0.9rem"
         
-       }}>Send_Request</Button>
+       }}
+      
+       
+       >Send_Request</Button>
 
 
       }
@@ -187,7 +231,11 @@ export default function Dashboard() {
        
           fontSize:"0.9rem"
         
-       }}>Leave_Room</Button>
+       }}
+       onClick={leave}
+      
+       
+       >Leave_Room</Button>
       </Box>
 
 

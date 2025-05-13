@@ -1,8 +1,12 @@
 import { Button, Paper, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState,useRef, useEffect, useContext } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
-export default function Attendance() {
-    const[rollnumber,setrollnumber]=useState('0');
+import { initsocket } from '../../socket';
+import { ThemeContext } from '../../ThemeContex';
+export default function Attendance({socketref}) {
+  console.log("socketref",socketref);
+    const{rollnumber,setrollnumber}=useContext(ThemeContext)
+   
     const popupstyle={
         height:"100px",
         width:"100%",
@@ -40,9 +44,14 @@ export default function Attendance() {
         color:"white"
 
       }
+
       
       const rollHandler=(e)=>{
         console.log("rollnumber is",rollnumber);
+        if(socketref.current){
+          socketref.current.emit('mark',{rollnumber});
+        }
+        
         toast.dismiss();
 
       }
