@@ -14,6 +14,13 @@ export default function Login() {
     setusername(uname);
     navigate(`/editor/${roomid}`);
   };
+  //handle join
+  const handlejoin=()=>{
+    if(uname=='admin'){
+      console.log("setstoreage");
+      localStorage.setItem('mark', JSON.stringify([]));
+    }
+  }
 
   return (
     <Paper
@@ -113,6 +120,7 @@ export default function Login() {
                 backgroundColor: '#3d7312',
               },
             }}
+            onClick={handlejoin}
           >
             Join Room
           </Button>
