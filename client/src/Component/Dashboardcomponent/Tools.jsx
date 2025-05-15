@@ -19,7 +19,9 @@ export default function Tools() {
   };
 
   const Showpx = () => {
+     console.log("showpen")
     setshowpen(prv => !prv);
+   
     setshoweraser(false);
   };
 
@@ -50,6 +52,7 @@ export default function Tools() {
     '#FFFFFF'  // White
   ];
 
+  console.log("showpen",showpen)
   return (
     <Box
       sx={{
@@ -65,11 +68,11 @@ export default function Tools() {
             elevation={3}
             sx={{
               position: 'absolute',
-              top: '-60px',
+              top: '80%',
               left: '50%',
               transform: 'translateX(-50%)',
               background: 'rgba(0, 0, 0, 0.8)',
-              color: 'white',
+              color: 'green',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -115,7 +118,7 @@ export default function Tools() {
             elevation={3}
             sx={{
               position: 'absolute',
-              top: '-60px',
+              top: '90%',
               left: '50%',
               transform: 'translateX(-50%)',
               background: 'rgba(255, 255, 255, 0.9)',
