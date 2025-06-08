@@ -8,11 +8,13 @@ const io=new Server(server);
 
 // Store admin information
 const roomAdmins = new Map();
+const userSocket=new Map();
 
 io.on("connection",socket=>{
     console.log("you socket id is",socket.id)
-    socket.on("join",({roomid})=>{
+    socket.on("join",({roomid,username})=>{
         socket.join(roomid)
+        userSocket.set(username,socket.id);
         console.log(`${socket.id} joined ${roomid}`)
     })
 
@@ -27,9 +29,9 @@ io.on("connection",socket=>{
     })
     
 
-    socket.on('sendreq',({message,roomid})=>{
-        console.log('message name is ',message);
-        socket.to(roomid).emit('r-sendreq',{message})
+    socket.on('sendreq',({message,roomid,socketid})=>{
+        console.log('message name is ',message,roomid);
+        socket.to(roomid).emit('r-sendreq',{message,socketid})
     })
 
     socket.on('mark',({rollnumber,roomid})=>{
@@ -47,6 +49,21 @@ io.on("connection",socket=>{
         // Notify all participants in the room that admin has left
         io.to(roomid).emit('admin-left');
         console.log(`Admin left room ${roomid}`);
+    });
+    //handle access
+    socket.on("access",({target,roomid,value})=>{
+        console.log(target);
+        if(target){
+            const socketinrooom=io.sockets.adapter.rooms.get(roomid);
+            if(socketinrooom?.has(target)){
+                console.log("granted",target);
+                io.to(target).emit("access-g",{value})
+            }else{
+                console.log("target is not in room");
+            }
+        }else{
+            console.log("target not found");
+        }
     });
 
     // Handle disconnection

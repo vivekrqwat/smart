@@ -13,9 +13,11 @@ import { Atd_popUp } from './Component/Atd_pop_up/Atd_popUp';
 
 
 export default function Dashboard() {
- 
   const socketref=useRef(null);
   const canvasRef = useRef(null);
+  const[access,setacess]=useState(false);
+   console.log("dashboard value",access)
+
     const[message,setmessage]=useState('');
     const{pen,penColor,username,setatd,atd,mark,setmark,roomid}=useContext(ThemeContext);
     const boxstyle={
@@ -30,8 +32,9 @@ export default function Dashboard() {
  
     console.log(username)
     const handleChange = async () => {
-      if (!canvasRef.current || !socketref.current||username!='admin') return;
     
+      if (!canvasRef.current || !socketref.current||(username!='admin'&&!access)) return;
+      console.log("change")
       const paths = await canvasRef.current.exportPaths();
       socketref.current.emit('drawing', {
         roomid: roomid,
@@ -70,7 +73,7 @@ const changeMark=(number)=>{
         socketref.current.emit('join',{
           id:roomid
         })
-        socketref.current.emit('join', { roomid: roomid });
+        socketref.current.emit('join', { roomid: roomid ,user:username});
         socketref.current.on("r-drawing",(data)=>{
         // console.log("data",data);
         // console.log("data2",canvasRef.current);
@@ -92,12 +95,18 @@ const changeMark=(number)=>{
             )
           }
         })
+        // take access
+        socketref.current.on("access-g",({value})=>{
+          console.log(value,"hello");
+          setacess(value);
+        })
+
 
 
         //recv  req
-        socketref.current.on('r-sendreq',({message})=>{
+        socketref.current.on('r-sendreq',({message,socketid})=>{
           console.log('bhai  ka nam',message)
-          setatd(prv=>[...prv,message]);
+          setatd(prv=>[...prv,{name:message,socketid:socketid}]);
         })
         //recv mark
         socketref.current.on('r-mark', ({ rollnumber }) => {
@@ -130,15 +139,12 @@ const changeMark=(number)=>{
     }
    const sendRequest=(e)=>{
     if(socketref.current){
-      socketref.current.emit('sendreq',{message:username,roomid:roomid})
+      socketref.current.emit('sendreq',{message:username
+        ,roomid:roomid,
+      socketid:socketref.current.id})
     }
    }
-   //senMail
-   const sendMail=(message)=>{
-
-   }
-
-  //
+  
 
    //leave
    const leave=()=>{
@@ -175,17 +181,24 @@ const changeMark=(number)=>{
     height={"100vh"}
     border={"2px solid red"}
     >
-          <ReactSketchCanvas
-         ref={canvasRef}
-        width="100%"
-        height="80%"
-        strokeWidth={pen}
-        strokeColor={penColor}
-        canvasColor="#D9D9D9"
-        withTimestamp={true}
-        onStroke={username=="admin"?handleChange:undefined}
-        allowOnlyPointerType={username=='admin'&&'all'}
-      />
+         <ReactSketchCanvas
+  ref={canvasRef}
+  width="100%"
+  height="80%"
+  strokeWidth={pen}
+  strokeColor={penColor}
+  canvasColor="#D9D9D9"
+  withTimestamp={true}
+  onStroke={(username === "admin" || access === true) ? handleChange : undefined}
+  allowOnlyPointerType={username === 'admin' ? 'all' : undefined}
+  style={{
+    pointerEvents: (username === "admin" || access === true) ? 'auto' : 'none',
+    opacity: (username === "admin" || access === true) ? 1 : 0.5,
+    border: '2px solid #ccc',
+    borderRadius: '8px'
+  }}
+/>
+
 
 
       <Box style={boxstyle} width={"100%"} mt="30px" height={"20%"}>
@@ -205,7 +218,7 @@ const changeMark=(number)=>{
 
 
        
-       { username=="admin"&&<Drawer1></Drawer1>}
+       { username=="admin"&&<Drawer1 socketref={socketref}></Drawer1>}
         {/* box for icon button */}
           {/* <Box style={boxstyle} width={"30%"}>
           <CreateIcon></CreateIcon>
@@ -217,12 +230,15 @@ const changeMark=(number)=>{
        {username=="admin"&&<Tools></Tools>} 
       {/* box for button */}
       <Box sx={boxstyle} width={"50%"}>
-   {  username=="admin"&& <Button variant='contained' sx={{background:"#4761DF",
-        color:"white",
+
+
+   {  
+  //  username=="admin"&& <Button variant='contained' sx={{background:"#4761DF",
+  //       color:"white",
         
-        fontSize:"0.9rem"
+  //       fontSize:"0.9rem"
         
-       }}>go_to code_collab</Button>
+  //      }}>go_to code_collab</Button>
       }
        
 

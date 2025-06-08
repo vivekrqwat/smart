@@ -19,7 +19,9 @@ export default function Login() {
     if(uname=='admin'){
       console.log("setstoreage");
       localStorage.setItem('mark', JSON.stringify(Array(100).fill(0)));
+      
     }
+    localStorage.setItem('username',JSON.stringify(uname));
   }
 
   return (

@@ -1,5 +1,5 @@
 
-import { use } from "react";
+import { use, useEffect } from "react";
 import { Children, createContext, useState } from "react";
 
 export const ThemeContext=createContext();
@@ -12,6 +12,17 @@ export const ThemeProvider=({children})=>{
     const[mark,setmark]= useState(Array(100).fill(0));
     const[rollnumber,setrollnumber]=useState();
       const [roomid, setroomid] = useState('');
+      //load username
+        useEffect(() => {
+    const storedUsername = JSON.parse(localStorage.getItem("username"));
+    if (storedUsername) {
+      setusername(storedUsername);
+    }
+
+   
+  }, []);
+
+
     const themeValue={
         pen,
         penColor,
